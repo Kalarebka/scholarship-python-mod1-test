@@ -1,4 +1,4 @@
-"""Write function that will generate continous fibonacci numbers.
+"""Write function that will generate continuous fibonacci numbers.
    You are forbidden from using for and while."""
 
 # The generator will not be infinite, at some point it will hit recursion limit

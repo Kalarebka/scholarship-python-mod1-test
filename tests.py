@@ -2,7 +2,8 @@ import pytest
 
 from infinite_numbers import fibonacci
 
-class TestInfiniteNumbers:
+
+class TestFibonacci:
     def test_fibonacci_yields_correct_numbers(self):
         fib_generator = fibonacci()
         num1 = next(fib_generator)
@@ -20,3 +21,12 @@ class TestInfiniteNumbers:
             next(fib_generator)
         num100 = next(fib_generator)
         assert num100 == 354224848179261915075
+
+
+class TestStarlink:
+    pass
+
+
+
+class TestFilterWith:
+    pass
