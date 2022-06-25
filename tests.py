@@ -23,10 +23,5 @@ class TestFibonacci:
         assert num100 == 354224848179261915075
 
 
-class TestStarlink:
-    pass
-
-
-
 class TestFilterWith:
     pass
