@@ -21,7 +21,3 @@ class TestFibonacci:
             next(fib_generator)
         num100 = next(fib_generator)
         assert num100 == 354224848179261915075
-
-
-class TestFilterWith:
-    pass
