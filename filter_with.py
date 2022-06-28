@@ -2,7 +2,8 @@
    to objects (list and/or dicts) that contains keyword. Function must filter nested containers.
    Usage of recursion is required"""
 
-"""DOES NOT WORK - I'm just leaving it here in case I think of some way to do it"""
+"""It's ugly but it works and does not use filter"""
+
 import json
 import pprint
 
@@ -10,15 +11,13 @@ from data import data
 
 pp = pprint.PrettyPrinter()
 
-
-# for item in filter_with(data, "Bruce Barton"):
-#     pp.pprint(item)
-
 def is_list_or_dict(item):
     return isinstance(item, list) or isinstance(item, dict)
 
 def contains_keyword(item, keyword):
-    return keyword in json.dumps(item)
+    if is_list_or_dict(item):
+        return keyword in json.dumps(item)
+    return True
 
 def has_nested_list_or_dict(data):
     if any(is_list_or_dict(item) for item in data):
@@ -26,22 +25,25 @@ def has_nested_list_or_dict(data):
     elif isinstance(data, dict):
         return any(is_list_or_dict(value) for value in data.values())
 
-def filterfilter(data, keyword):
-    # Check if it's base case - data contains no objects that have nested lists or dicts
-    base_case = True
-    for item in data:
-        if (is_list_or_dict(item)) and has_nested_list_or_dict(item):
-            base_case = False
-    if base_case:
-        return data
+def filter_with(data, keyword):
+    # Base case
+    if not has_nested_list_or_dict(data):
+        if isinstance(data, list):
+            return [item for item in data if contains_keyword(item, keyword)]
+        elif isinstance(data, dict):
+            return {k: v for k, v in data.items() if contains_keyword(v, keyword)}
     # Have to go deeper & data is a list?
     if isinstance(data, list):
-        new_data = [filterfilter(item) if is_list_or_dict(item) else item for item in data]
-        return 
-    
+        new_data = [filter_with(item, keyword) if is_list_or_dict(item) else item for item in data]
+        return [item for item in new_data if contains_keyword(item, keyword)]
+    # Have to go deeper & data is a dict?
+    elif isinstance(data, dict):
+        new_data = {key: filter_with(value, keyword) if is_list_or_dict(value) else value for key, value in data.items()}
+        return {k: v for k, v in new_data.items() if contains_keyword(v, keyword)}
 
+        # list(filter(lambda item: contains_keyword(item, keyword), new_data))
+        # dict(filter(lambda item: contains_keyword(item[1]), new_data.items()))
 
+for item in filter_with(data, "Gloria"):
+    pp.pprint(item)
             
-
-
-
