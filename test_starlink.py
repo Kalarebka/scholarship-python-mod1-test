@@ -1,3 +1,5 @@
+"""No complete coverage, but there's nothing significantly different I could do with the rest here"""
+
 import pytest
 
 from starlink import Satellite, GroupOfSatellites, Operator, Overlord
@@ -9,7 +11,7 @@ class TestSatellite:
         assert satellite_one.altitude == 500
         assert satellite_one.coordinates == (50.4444, 120.666)
         assert satellite_one.solar_sail_on == False
-        assert satellite_one.sattelite_on == True
+        assert satellite_one.satellite_on == True
         assert satellite_one.signal_transmit_on == False
 
     def test_create_satellite_with_wrong_coordinates(self):
@@ -45,10 +47,38 @@ class TestGroupOfSatellites:
         removed = group.remove_satellite(satellite_two)
         assert removed is None
 
+
 class TestOperator:
-    pass
+    def test_create_operator(self):
+        operator = Operator("John", "Smith")
+        assert str(operator) == "Operator John Smith"
+
+    def test_set_satellite_altitude():
+        operator = Operator("John", "Smith")
+        satellite_one = Satellite(500.0, (50.4444, 120.666))
+        operator.set_satellite_altitude(satellite_one, 550.9)
+        assert satellite_one.altitude == 550.9
+
+    def test_set_satellite_altitude_nagative_value(self):
+        operator = Operator("John", "Smith")
+        satellite_one = Satellite(500.0, (50.4444, 120.666))
+        operator.set_satellite_altitude(satellite_one, -550.9)
+        assert satellite_one.altitude == 500.0
+        
+
 
 class TestOverlord:
     def test_create_overlord(self):
         overlord = Overlord("Genghis", "Khan")
         assert str(overlord) == "Overlord Genghis Khan"
+
+    def test_shutdown_group(self):
+        overlord = Overlord("Genghis", "Khan")
+        group = GroupOfSatellites()
+        satellite_one = Satellite(500.0, (50.4444, 120.666))
+        satellite_two = Satellite(500.0, (50.47744, 119.666))
+        group.add_satellite(satellite_one)
+        group.add_satellite(satellite_two)
+        overlord.shutdown_group(group)
+        assert satellite_one.satellite_on == False
+        assert satellite_two.satellite_on == False

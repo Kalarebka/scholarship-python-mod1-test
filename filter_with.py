@@ -11,25 +11,37 @@ from data import data
 pp = pprint.PrettyPrinter()
 
 
-def filter_with(data, keyword: str):
-    return filter(lambda x: contains_keyword(x, keyword), data)
+# for item in filter_with(data, "Bruce Barton"):
+#     pp.pprint(item)
+
+def is_list_or_dict(item):
+    return isinstance(item, list) or isinstance(item, dict)
 
 def contains_keyword(item, keyword):
-    if has_nested_list_or_dict(data):
-        return filter_with(item, keyword)
     return keyword in json.dumps(item)
 
 def has_nested_list_or_dict(data):
-    if any(isinstance(item, list) or isinstance(item, dict) for item in data):
+    if any(is_list_or_dict(item) for item in data):
         return True
     elif isinstance(data, dict):
-        return any(isinstance(value, list) or isinstance(value, dict) for value in data.values())
+        return any(is_list_or_dict(value) for value in data.values())
+
+def filterfilter(data, keyword):
+    # Check if it's base case - data contains no objects that have nested lists or dicts
+    base_case = True
+    for item in data:
+        if (is_list_or_dict(item)) and has_nested_list_or_dict(item):
+            base_case = False
+    if base_case:
+        return data
+    # Have to go deeper & data is a list?
+    if isinstance(data, list):
+        new_data = [filterfilter(item) if is_list_or_dict(item) else item for item in data]
+        return 
+    
 
 
-
-for item in filter_with(data, "Bruce Barton"):
-    pp.pprint(item)
-
+            
 
 
 

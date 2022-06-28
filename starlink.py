@@ -20,7 +20,7 @@ class Satellite:
         self.coordinates = coordinates
         self.solar_sail_on = False
         self.signal_transmit_on = False
-        self.sattelite_on = True
+        self.satellite_on = True
         Satellite.instances.append(self)
         logging.info(f"Created {self}")
 
@@ -50,7 +50,7 @@ class Satellite:
             logging.error(f"{self}: coordinates not set, invalid values")
             raise ValueError(f"Invalid coordinates provided: {coords}")
 
-    def __repr__(self):
+    def __str__(self):
         return f'Satellite id: {self.id}'
 
 
@@ -60,7 +60,7 @@ class GroupOfSatellites:
 
     def __init__(self):
         self.satellites = set()
-        GroupOfSatellites.append(self)
+        GroupOfSatellites.instances.append(self)
         logging.info(f"Created new group of satellites")
 
     def add_satellite(self, satellite: Satellite):
@@ -91,12 +91,15 @@ class Operator:
         self.first_name = first_name
         self.last_name = last_name
 
-    def __repr__(self):
+    def __str__(self):
         return f'Operator {self.first_name} {self.last_name}'
 
     # Control satellite localization
     def set_satellite_altitude(self, satellite: Satellite, altitude):
-        satellite.altitude(altitude)
+        try:
+            satellite.altitude(altitude)
+        except ValueError as err:
+            logging.error(f"Could not change altitude of {satellite}: {err}")
 
     def set_group_altitude(self, group: GroupOfSatellites, altitude):
         for satellite in group.satellites:
@@ -142,10 +145,19 @@ class Operator:
     
     # Helper methods
     def get_valid_lat(lat: float) -> float:
-        pass
+        if lat < -90:
+            return lat + 180
+        elif lat > 90:
+            return lat - 180
+        return lat
+
 
     def get_valid_long(long: float) -> float:
-        pass
+        if long < -180:
+            return long + 360
+        elif long > 180:
+            return long - 360
+        return long
 
 
 class Overlord(Operator):
@@ -153,15 +165,15 @@ class Overlord(Operator):
        It's got to be able to:
        - the same as a regular operator
        - can shut down individual satellites, selected groups or the whole system (all available satellites)"""
-    def __repr__(self):
+    def __str__(self):
         return f"Overlord {self.first_name} {self.last_name}"
 
     def shutdown_satellite(self, satellite: Satellite):
         logging.info(f"{self}: shutting down {satellite}")
-        satellite.sattelite_on = False
+        satellite.satellite_on = False
 
     def shutdown_group(self, satellite_group: GroupOfSatellites):
-        for satellite in satellite_group:
+        for satellite in satellite_group.satellites:
             self.shutdown_satellite(satellite)
 
     def shutdown_all(self):
