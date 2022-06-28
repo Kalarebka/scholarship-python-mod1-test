@@ -17,7 +17,7 @@ class TestSatellite:
     def test_create_satellite_with_wrong_coordinates(self):
         with pytest.raises(ValueError):
             satellite_one = Satellite(500.0, (100.0, 120.999))
-    
+
     def test_create_satellite_with_wrong_altitude(self):
         with pytest.raises(ValueError):
             satellite_one = Satellite(-500.0, (50.4444, 120.666))
@@ -53,18 +53,29 @@ class TestOperator:
         operator = Operator("John", "Smith")
         assert str(operator) == "Operator John Smith"
 
-    def test_set_satellite_altitude():
+    def test_set_satellite_altitude(self):
         operator = Operator("John", "Smith")
         satellite_one = Satellite(500.0, (50.4444, 120.666))
         operator.set_satellite_altitude(satellite_one, 550.9)
         assert satellite_one.altitude == 550.9
 
-    def test_set_satellite_altitude_nagative_value(self):
+    def test_set_satellite_altitude_negative_value(self):
         operator = Operator("John", "Smith")
         satellite_one = Satellite(500.0, (50.4444, 120.666))
         operator.set_satellite_altitude(satellite_one, -550.9)
         assert satellite_one.altitude == 500.0
-        
+
+    def test_change_satellite_coordinates(self):
+        operator = Operator("John", "Smith")
+        satellite_one = Satellite(500.0, (50.0, 120.0))
+        operator.change_satellite_coordinates(satellite_one, 10.0, -20.0)
+        assert satellite_one.coordinates == (60.0, 100.0)
+
+    def test_change_satellite_coordinates_crossing_180th_meridian(self):
+        operator = Operator("John", "Smith")
+        satellite_one = Satellite(500.0, (50.0, 170.0))
+        operator.change_satellite_coordinates(satellite_one, 10.0, 30.0)
+        assert satellite_one.coordinates == (60.0, -160.0)
 
 
 class TestOverlord:
